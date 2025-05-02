@@ -1,7 +1,6 @@
 package com.projectAPI.contactList.tests;
 
 import com.projectAPI.contactList.utils.ContactListBasePage;
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
@@ -9,9 +8,10 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.Map;
 
-import static io.restassured.path.json.JsonPath.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UsersTests extends ContactListBasePage {
 
@@ -34,8 +34,7 @@ public class UsersTests extends ContactListBasePage {
         user.put("email", "mhunnam@practice.com");
         user.put("password", "matt1234");
 
-        Response response = RestAssured
-                .given()
+        Response response = given()
                 .contentType(ContentType.JSON)
                 .body(user)
                 .when()
@@ -45,16 +44,16 @@ public class UsersTests extends ContactListBasePage {
 
         // Assert response body using JsonPath
         JsonPath json = response.jsonPath();
-        assertEquals("Matt", json.getString("firstName"));
-        assertEquals("Hunnam", json.getString("lastName"));
-        assertEquals("mhunnam@practice.com", json.getString("email"));
+        assertEquals("Matt", json.getString("user.firstName"));
+        assertEquals("Hunnam", json.getString("user.lastName"));
+        assertEquals("mhunnam@practice.com", json.getString("user.email"));
 
     }
 
     /**
      * Given accept type is JSON
      * And login credentials are correct
-     * When user sends GET request to /users/login
+     * When user sends POST request to /users/login
      * Then response status code should be 200
      * And response body should contain a valid token
      */
@@ -62,18 +61,25 @@ public class UsersTests extends ContactListBasePage {
     @Test
     public void TC11Login(){
 
-        Response response = RestAssured
-                .given().accept(ContentType.JSON)
-                .queryParam("email", "mhunnam@practice.com")
-                .queryParam("password", "matt1234").
-                when().get("/users/login").
-                then()
-                .extract().response();
+        String payload = "{"
+                + "\"email\": \"mhunnam@practice.com\","
+                + "\"password\": \"matt1234\""
+                + "}";
+
+
+
+        Response response = given().contentType(ContentType.JSON)
+                .body(payload)
+                .when()
+                .post("/users/login");
 
         assertEquals(200, response.statusCode());
 
-        token = response.jsonPath().getString("token");
-        System.out.println("Token = " + token);
+        JsonPath jsonPath = response.jsonPath();
+        token = jsonPath.getString("token");
+        System.out.println("Extracted token: " + token);
+
+
 
 
     }
