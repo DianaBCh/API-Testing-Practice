@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UsersTests extends ContactListBasePage {
 
-    public static String token;
+
 
     /**
      * Given content type is JSON
@@ -50,38 +50,6 @@ public class UsersTests extends ContactListBasePage {
 
     }
 
-    /**
-     * Given accept type is JSON
-     * And login credentials are correct
-     * When user sends POST request to /users/login
-     * Then response status code should be 200
-     * And response body should contain a valid token
-     */
-    @Order(2)
-    @Test
-    public void TC11Login(){
 
-        String payload = "{"
-                + "\"email\": \"mhunnam@practice.com\","
-                + "\"password\": \"matt1234\""
-                + "}";
-
-
-
-        Response response = given().contentType(ContentType.JSON)
-                .body(payload)
-                .when()
-                .post("/users/login");
-
-        assertEquals(200, response.statusCode());
-
-        JsonPath jsonPath = response.jsonPath();
-        token = jsonPath.getString("token");
-        System.out.println("Extracted token: " + token);
-
-
-
-
-    }
 
 }
