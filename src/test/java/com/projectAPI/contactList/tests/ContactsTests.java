@@ -252,7 +252,7 @@ public class ContactsTests extends ContactListBasePage {
 
         Response response = given()
                 .header("Authorization", "Bearer " + UsersTests.token)
-                .accept(ContentType.JSON)
+                .contentType(ContentType.JSON)
                 .body(partialUpdate)
                 //.log().all()
                 .when()
@@ -262,6 +262,7 @@ public class ContactsTests extends ContactListBasePage {
         assertEquals(200, response.statusCode());
         assertEquals("application/json; charset=utf-8", response.contentType());
         assertEquals("Anna", response.jsonPath().getString("firstName"), "Last name updated");
+        //System.out.println(response.jsonPath().getString("firstName"));
 
 
     }
