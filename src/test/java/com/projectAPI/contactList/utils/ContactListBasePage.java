@@ -19,7 +19,7 @@ public class ContactListBasePage {
 
         baseURI= "https://thinking-tester-contact-list.herokuapp.com";
 
-        String payload = "{"
+        String credentials = "{"
                 + "\"email\": \"mhunnam@practice.com\","
                 + "\"password\": \"matt1234\""
                 + "}";
@@ -27,7 +27,7 @@ public class ContactListBasePage {
 
 
         Response response = given().contentType(ContentType.JSON)
-                .body(payload)
+                .body(credentials)
                 .when()
                 .post("/users/login");
 
