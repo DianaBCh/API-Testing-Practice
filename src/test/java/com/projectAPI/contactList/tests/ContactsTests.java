@@ -4,20 +4,25 @@ import com.projectAPI.contactList.utils.ContactListBasePage;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 
 import java.util.List;
 
+import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ContactsTests extends ContactListBasePage {
+public class ContactsTests {
 
-    static String id;
+    @BeforeAll
+    public static void init(){
+
+        baseURI= "https://thinking-tester-contact-list.herokuapp.com";
+
+    }
+
+    public static String id;
 
     /**
      * Given content type is JSON
