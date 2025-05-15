@@ -1,6 +1,7 @@
 package com.projectAPI.contactList.tests;
 
 import com.projectAPI.contactList.utils.ContactListBasePage;
+import com.projectAPI.contactList.utils.ContactListUtils;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.*;
@@ -10,16 +11,21 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class UsersTests{
+public class UsersTests extends ContactListBasePage{
 
     public static String token;
+    static String email = "canel@practice.com";
+    static String password = "lora1234";
 
     @BeforeAll
-    public static void init(){
-
-        baseURI= "https://thinking-tester-contact-list.herokuapp.com";
-
+    public static void setupToken() {
+        token = ContactListUtils.getToken(email, password);
+        assertNotNull(token, "Token should not be null");
+        System.out.println("TOKEN FROM @BeforeAll: " + token);
     }
+
+
+
 
     /**
      * Given content type is JSON
@@ -43,8 +49,8 @@ public class UsersTests{
         String newUser = "{"
                 + "\"firstName\": \"Lora\","
                 + "\"lastName\": \"Cane\","
-                + "\"email\": \"loracane@practice.com\","
-                + "\"password\": \"lora1234\""
+                + "\"email\": \"" + email + "\","
+                + "\"password\": \"" + password + "\""
                 + "}";
 
         Response response =
@@ -59,37 +65,19 @@ public class UsersTests{
         assertEquals(201, response.statusCode(), "User should be created successfully");
         System.out.println("User registration response: " + response.asString());
 
+        // login and store token
+        //token = ContactListUtils.getToken("canel@practice.com", "lora1234");
+        //assertNotNull(token);
+        //System.out.println("Token: " + token);
+
     }
 
-    /**TC05LoginRequest
-     * Given accept type is JSON
-     * And login credentials are correct
-     * When user sends POST request to /users/login
-     * Then response status code should be 200
-     * And response body should contain a valid token
-     */
     @Test
-    public void TC07LoginRequest(){
-
-        String credentials = "{"
-                + "\"email\": \"loracane@practice.com\","
-                + "\"password\": \"lora1234\""
-                + "}";
-
-        Response response = given()
-                .contentType(ContentType.JSON)
-                .body(credentials)
-                .when()
-                .post("/users/login");
-
-        assertEquals(200, response.statusCode(), "Login should be successful");
-
-        token = response.jsonPath().getString("token");
-        assertNotNull(token, "Token should not be null");
-        System.out.println("Token: " + token);
-
-
-
+    @Order(2)
+    public void TC02LoginAndGetToken() {
+        token = ContactListUtils.getToken(email, password);
+        assertNotNull(token);
+        System.out.println("TOKEN: " + token);
     }
 
 
@@ -105,16 +93,17 @@ public class UsersTests{
 
         System.out.println("Token: " + token);
 
-        System.out.println("Using token: " + token);
-
-        Response response = given()
+        //Response response =
+        given()
                 .header("Authorization", "Bearer " + token)
                 .when()
-                .get("/users/me");
+                .get("/users/me")
+              .then().log().all()
+              .statusCode(200);
 
-        assertEquals(200, response.statusCode(), "Status code should be 200");
+        //assertEquals(200, response.statusCode(), "Status code should be 200");
 
-        System.out.println("User Profile: " + response.asPrettyString());
+        //System.out.println("User Profile: " + response.asPrettyString());
 
 
     }

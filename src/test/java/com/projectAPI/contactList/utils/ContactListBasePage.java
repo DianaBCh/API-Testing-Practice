@@ -14,7 +14,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ContactListBasePage {
 
+    @BeforeAll
+    public static void init(){
 
+        baseURI= "https://thinking-tester-contact-list.herokuapp.com";
+
+
+    }
 
 
 
