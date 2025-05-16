@@ -1,6 +1,7 @@
 package com.projectAPI.contactList.tests;
 
 import com.projectAPI.contactList.utils.ContactListBasePage;
+import com.projectAPI.contactList.utils.ContactListUtils;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
@@ -8,86 +9,25 @@ import org.junit.jupiter.api.*;
 
 import java.util.List;
 
-import static io.restassured.RestAssured.baseURI;
+import static com.projectAPI.contactList.tests.UsersTests.email;
+import static com.projectAPI.contactList.tests.UsersTests.password;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ContactsTests {
+public class ContactsTests extends ContactListBasePage{
+
+    public static String token;
+
+    static String id;
+
+
 
     @BeforeAll
-    public static void init(){
+    public static void setUp(){
 
-        baseURI= "https://thinking-tester-contact-list.herokuapp.com";
-
-    }
-
-    public static String id;
-
-    /**
-     * Given content type is JSON
-     * And valid contact data is provided
-     * And Authorization token is set
-     * When user sends POST request to /contacts
-     * Then response status code should be 201
-     * And response body should contain the contact information
-     *
-     */
-    @Order(1)
-    @Test()
-    public void TC01CreateContact(){
-
-        String contactInfo = "{"
-                + "\"firstName\": \"Lola\","
-                + "\"lastName\": \"Benoit\","
-                + "\"birthdate\": \"1998-11-02\","
-                + "\"email\": \"lobenoit@practice.com\","
-                + "\"phone\": \"2347612947\","
-                + "\"street1\": \"23 Main St.\","
-                + "\"street2\": \"Apartment X\","
-                + "\"city\": \"Quebec\","
-                + "\"stateProvince\": \"QC\","
-                + "\"postalCode\": \"J6S3V5\","
-                + "\"country\": \"Canada\"" +
-                 "}";
-
-        System.out.println("Token: " + UsersTests.token);
-
-
-        JsonPath jsonPath = given().accept(ContentType.JSON)
-                .contentType(ContentType.JSON)
-                .header("Authorization", "Bearer " + UsersTests.token)
-                .body(contactInfo)
-                .when()
-                .post("/contacts")
-                .then()
-                .statusCode(201)
-                .contentType("application/json")
-                .extract().jsonPath();
-
-        System.out.println("Full Response Body: " + jsonPath.prettify());
-
-        String createdId = jsonPath.getString("_id");
-        System.out.println("New contact ID = " + createdId);
-        id = createdId;
-
-
-
-       /*
-        //assertions
-        assertEquals("Cely", jsonPath.getString("firstName"));
-        assertEquals("Benoit", jsonPath.getString("lastName"));
-        assertEquals("1998-11-02", jsonPath.getString("birthdate"));
-        assertEquals("cbenoit@practice.com", jsonPath.getString("email"));
-        assertEquals("2347612947", jsonPath.getString("phone"));
-        assertEquals("23 Main St.", jsonPath.getString("street1"));
-        assertEquals("Apartment X", jsonPath.getString("street2"));
-        assertEquals("Quebec", jsonPath.getString("city"));
-        assertEquals("QC", jsonPath.getString("stateProvince"));
-        assertEquals("J6S3V5", jsonPath.getString("postalCode"));
-        assertEquals("Canada", jsonPath.getString("country"));
-
-        */
+        token = ContactListUtils.getToken(email, password);
+        id = ContactListUtils.TC01createContact(token);
 
     }
 
@@ -99,12 +39,12 @@ public class ContactsTests {
      * Then response status code should be 200
      * And response body should contain a non-empty contact list
      */
-    @Order(2)
+    @Order(1)
     @Test
     public void TC02GetContactList(){
 
         Response response = given()
-                .header("Authorization", "Bearer " + UsersTests.token)
+                .header("Authorization", "Bearer " + token)
                 .accept(ContentType.JSON)
                 .when()
                 .get("/contacts")
@@ -115,6 +55,7 @@ public class ContactsTests {
 
 
         List<Object> contactList = response.jsonPath().getList("");
+        System.out.println(contactList);
         assertFalse(contactList.isEmpty(), "Contact list should not be empty");
 
 
@@ -129,14 +70,14 @@ public class ContactsTests {
      * Then response status code should be 200
      * And response body should contain contact details
      */
-    @Order(3)
+    @Order(2)
     @Test
     public void TC03GetContactById(){
 
         System.out.println("Id =" + id);
 
         Response response = given()
-                .header("Authorization", "Bearer " + UsersTests.token)
+                .header("Authorization", "Bearer " + token)
                 .accept(ContentType.JSON)
                 .pathParam("id", id)
                 .when()
@@ -145,7 +86,6 @@ public class ContactsTests {
         // Validate status code and contentType
         assertEquals(200, response.getStatusCode());
         assertEquals("application/json; charset=utf-8",response.contentType());
-        //System.out.println("Response Body: " + response.getBody().asString());// Print the response body for debugging
 
         // Retrieve data by using JsonPath
         JsonPath jsonPath = response.jsonPath();
@@ -162,12 +102,13 @@ public class ContactsTests {
         System.out.println("email = " + email);
 
         //assert data
-        assertEquals(ContactsTests.id, actualId);
+        assertEquals(id, actualId);
         assertEquals("Lola", firstName);
         assertEquals("Benoit", lastName);
         assertEquals("lobenoit@practice.com", email);
 
     }
+
 
     /**
      * TC04 Given content type is JSON
@@ -178,7 +119,7 @@ public class ContactsTests {
      * Then response status code should be 200
      *     And response body should reflect updated contact
      */
-    @Order(4)
+    @Order(3)
     @Test
     public void TC04UpdateContact(){
 
@@ -197,28 +138,11 @@ public class ContactsTests {
                 + "\"postalCode\": \"J6S3V5\","
                 + "\"country\": \"Canada\"" +
                 "}";
-        /*
-        "_id": "681a97d4e961e400152f5312",
-    "firstName": "Lola",
-    "lastName": "Benoit",
-    "birthdate": "1998-11-02",
-    "email": "lobenoit@practice.com",
-    "phone": "2347612947",
-    "street1": "23 Main St.",
-    "street2": "Apartment X",
-    "city": "Quebec",
-    "stateProvince": "QC",
-    "postalCode": "J6S3V5",
-    "country": "Canada",
-    "owner": "6813fe9fabed1400150a7699",
-    "__v": 0
-         */
 
         Response response = given()
-                .header("Authorization", "Bearer " + UsersTests.token)
+                .header("Authorization", "Bearer " + token)
                 .contentType(ContentType.JSON)
                 .body(contactInfoUpdated)
-                //.log().all()
                 .when()
                 .put("/contacts/" + id);
 
@@ -230,11 +154,10 @@ public class ContactsTests {
         assertEquals("mbenoit@practice.com", response.jsonPath().getString("email"), "Email updated");
 
         //print updated contact
-        //System.out.println("Updated contact: " + response.asPrettyString());
-
-
+        System.out.println("Updated contact: " + response.asPrettyString());
 
     }
+
 
     /**
      * TC05 Given content type is JSON
@@ -245,7 +168,7 @@ public class ContactsTests {
      * Then response status code should be 200
      *     And response body should contain updated fields
      */
-    @Order(5)
+    @Order(4)
     @Test
     public void TC05PartialUpdate(){
 
@@ -256,10 +179,9 @@ public class ContactsTests {
                 + "}";
 
         Response response = given()
-                .header("Authorization", "Bearer " + UsersTests.token)
+                .header("Authorization", "Bearer " + token)
                 .contentType(ContentType.JSON)
                 .body(partialUpdate)
-                //.log().all()
                 .when()
                 .patch("/contacts/" + id);
 
@@ -267,10 +189,9 @@ public class ContactsTests {
         assertEquals(200, response.statusCode());
         assertEquals("application/json; charset=utf-8", response.contentType());
         assertEquals("Anna", response.jsonPath().getString("firstName"), "Last name updated");
-        //System.out.println(response.jsonPath().getString("firstName"));
-
 
     }
+
 
     /**
      * TC06 Given Authorization token is set
@@ -279,14 +200,14 @@ public class ContactsTests {
      * Then response status code should be 204
      *     And contact is removed from list
      */
-    @Order(6)
+    @Order(5)
     @Test
     public void TC06DeleteContact(){
 
         System.out.println("Id= " + id);
 
         Response deleteResponse = given()
-                .header("Authorization", "Bearer " + UsersTests.token)
+                .header("Authorization", "Bearer " + token)
                 .pathParam("id", id)
                 .when()
                 .delete("/contacts/{id}");
@@ -296,7 +217,7 @@ public class ContactsTests {
 
         // send GET request to confirm deletion
         Response getResponse = given()
-                .header("Authorization", "Bearer " + UsersTests.token)
+                .header("Authorization", "Bearer " + token)
                 .accept(ContentType.JSON)
                 .pathParam("id", id)
                 .when()
