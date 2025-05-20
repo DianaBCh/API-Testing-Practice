@@ -1,7 +1,7 @@
 
 # API Testing Practice
 
-This project is a portfolio demonstration designed to showcase my skills in API automation testing. The framework targets the contact list API available at [https://thinking-tester-contact-list.herokuapp.com](https://thinking-tester-contact-list.herokuapp.com) and includes a robust set of tests for both user and contact endpoints.
+This project is a portfolio demonstration designed to showcase my skills in API automation testing. The framework targets the Contact list API available at [https://thinking-tester-contact-list.herokuapp.com](https://thinking-tester-contact-list.herokuapp.com) and includes a robust set of tests for both user and contact endpoints.
 
 
 
@@ -57,8 +57,8 @@ API-Testing-Practice/
 
   * *Get Contact List:* Retrieves the list of contacts.
   * *Get Contact By ID:* Fetches a specific contact using the contact ID.
-  * *Update Contact:* Performs a full update of contact information.
-  * *Partial Update:* Tests updating only selected fields of a contact.
+  * *Update Contact:* Performs a complete update of contact information.
+  * *Partial Update:* Updates only selected fields of a contact.
   * *Delete Contact:* Deletes a contact and validates successful deletion.    
 
 
@@ -67,14 +67,16 @@ API-Testing-Practice/
 * Both test classes (`UsersTests` and `ContactsTests`) simulate complete end-to-end flows when executed in sequence.
 
 > To run Contacts tests successfully:
-
+>
 > 1. Create a user and log in via `UsersTests`.
 > 2. Ensure the authentication token is valid and accessible to the contact-related tests.
 
 Tokens and contact IDs are managed using static variables and utility methods in `ContactListUtils`, ensuring shared accessibility across tests when run in sequence.
 
-> **Note:** The `ContactsTests` class depends on a valid user and authentication token. Therefore, **only the `createUser` and `loginRequest` tests** from the `UsersTests` class must be executed **before** running `ContactsTests`.
-> Avoid running the entire `UsersTests` class beforehand, as it includes tests that log out and delete the user, which would invalidate the token and break the contact-related tests.
+> **Note:**
+> You can run the entire `UsersTests` class independently to observe the full user flow (create, login, profile, update, logout, delete).
+> However, if you intend to run the `ContactsTests`, you must run **only** the first two tests from `UsersTests` — `TC01CreateNewUser` and `TC02LoginAndGetToken`. These tests create the user and generate a valid authentication token required by the contact-related tests.
+> Running the full `UsersTests` beforehand will log out and delete the user, which invalidates the token and causes the contact tests to fail.
 
 
   ## Technologies Used
@@ -95,9 +97,13 @@ Tokens and contact IDs are managed using static variables and utility methods in
 ## How to Run Tests
 
 ### Using an IDE (Recommended)
+1. Clone the project from GitHub:  
+   `https://github.com/DianaBCh/API-Testing-Practice.git`
 
-1. Import the project into your IDE.
-2. Run tests by right-clicking the test classes (e.g., `UsersTests.java`, `ContactsTests.java`) and selecting **Run**.
+2. Import the project into your IDE (e.g., IntelliJ IDEA, Eclipse).
+
+3. Run the tests by right-clicking on a test class (e.g., `UsersTests.java`, `ContactsTests.java`) and selecting **Run**.
+
 
 ### Using Maven CLI (Optional)
 
