@@ -11,8 +11,20 @@ Steps:
    Expected Outcome:
 - A new user is created and returned in the response body with status code 201.
 
+2. POST LoginRequest
+   Description:
+   This test case verifies that the POST /login endpoint logs a user in successfully.
 
-2. GET GetUserProfile
+Steps:
+1. Send a POST request to /login with valid credentials (username and password).
+2. Assert that the response status code is 200 (OK).
+3. Verify that the response contains a valid authentication token.
+   Expected Outcome:
+- The user is successfully logged in, and the response contains an authentication token.
+
+
+
+3. GET GetUserProfile
    Description:  
    This test case verifies that the GET /users/profile endpoint returns the correct user profile.
 
@@ -24,7 +36,7 @@ Steps:
 - The response contains the correct user profile data.
 
 
-3. PATCH UpdateUser
+4. PATCH UpdateUser
    Description:  
    This test case verifies that the PATCH /users/{id} endpoint updates the user's information.
 
@@ -36,7 +48,7 @@ Steps:
 - The user's details are updated successfully and reflected in the response.
 
 
-4. POST LogoutRequest
+5. POST LogoutRequest
    Description:  
    This test case verifies that the POST /logout endpoint logs the user out successfully.
 
@@ -47,16 +59,6 @@ Steps:
    Expected Outcome:
 - The user is logged out, and the response indicates a successful logout.
 
-5. POST LoginRequest
-   Description:
-   This test case verifies that the POST /login endpoint logs a user in successfully.
-
-Steps:
-1. Send a POST request to /login with valid credentials (username and password).
-2. Assert that the response status code is 200 (OK).
-3. Verify that the response contains a valid authentication token.
-   Expected Outcome:
-- The user is successfully logged in, and the response contains an authentication token.
 
 
 6. DELETE DeleteUser

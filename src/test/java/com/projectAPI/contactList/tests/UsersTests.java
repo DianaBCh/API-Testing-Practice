@@ -70,7 +70,7 @@ public class UsersTests extends ContactListBasePage{
      */
     @Order(3)
     @Test
-    public void TC02GetUserProfile(){
+    public void TC03GetUserProfile(){
         String token = ContactListUtils.getToken(email, password);
         System.out.println("Token: " + token);
 
@@ -98,7 +98,7 @@ public class UsersTests extends ContactListBasePage{
      */
     @Order(4)
     @Test
-    public void updateUserProfile() {
+    public void TC04UpdateUserProfile() {
         String token = ContactListUtils.getToken(email, password);
 
         Response getResponse = given()
@@ -145,7 +145,7 @@ public class UsersTests extends ContactListBasePage{
      */
     @Order(5)
     @Test
-    public void TC04LogoutRequest(){
+    public void TC05LogoutRequest(){
         String token = ContactListUtils.getToken(email, password);
 
         Response response = given()
@@ -168,7 +168,7 @@ public class UsersTests extends ContactListBasePage{
      */
     @Order(6)
     @Test
-    public void TC05DeleteUser(){
+    public void TC06DeleteUser(){
         String token = ContactListUtils.getToken(email, password);
 
         Response response = given()
